@@ -95,7 +95,7 @@ combined_ids <- data_age_gender_subset |>
   select(unique_id) |>
   full_join(data_amp_summary_subset |> select(unique_id), by = "unique_id") |>
   full_join(data_selfreport_summary_subset |> select(unique_id), by = "unique_id") |>
-  distinct()
+  distinct() #distinct to get duplicates only shown once because by full_joining you get duplicates
 
 data_missing_ids <- combined_ids |>
   anti_join(data_unique_id_subset, by = "unique_id")
