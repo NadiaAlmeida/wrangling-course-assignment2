@@ -1,7 +1,7 @@
 ---
 title: "Evaluations of positive and negative stimuli using the Affective Misattribution Procedure (AMP) and self-reports"
 subtitle: "Data processing"
-author: "Template: Ian Hussey; content: [Student name]"
+author: "Template: Ian Hussey; content: Nadia Almeida Ferreira "
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -216,6 +216,31 @@ TODO - 14/10
 - Exclude them
 - check your exclusions worked.
 - use: mutate, group_by, summarize, _join
+
+```{r}
+#replace all non 1-7 numbers in `response` with NA
+
+data_selfreport_response_tidied <- data_selfreport_tidied |>
+  mutate(response = ifelse(response %in% 1:7, response, NA)) 
+#count number of unique_ids with correct/wrong number of responses
+data_selfreport_unique_ids_resultscount <- data_selfreport_response_tidied |>
+  group_by(response) |>
+  summarise(unique_count = n_distinct(unique_id)) 
+#Exclude them
+data_selfreport_excluded_ids<- data_selfreport_response_tidied |>
+  filter(is.na(response)) |>
+  select(unique_id)
+
+data_selfreport_excluded <- data_selfreport_response_tidied |>
+  anti_join(data_selfreport_excluded_ids, by = "unique_id")
+
+#check your exclusions worked
+check_exclusions <- data_selfreport_excluded |>
+  group_by(response)|>
+  summarise(unique_ids_left= n_distinct(unique_id))
+
+
+```
 
 # Score measures
 
