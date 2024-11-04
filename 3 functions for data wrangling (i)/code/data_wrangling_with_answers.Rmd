@@ -546,8 +546,8 @@ data_selfreport_trials |>
   count(response)
 
 data_selfreport_cleaned <- data_selfreport_trials|>
-  mutate(response = ifelse(response %in% 1:7, response, NA),
-         response = as.numeric(response))
+  mutate(response = ifelse(response %in% as.character(seq(1:7)), response, NA_integer_),
+         response = as.numeric(response)) # no longer shows warning from only using 1:7
 
 data_selfreport_cleaned |>
   count(response)
@@ -558,7 +558,10 @@ What other ways are there of implementing this mutate, e.g., without using `%in%
 
 ```{r}
 
-# you could use mutate(response = na_if("ctrl +8", NA, response)) to remove the response that does not correspond to a likert response but if there are multiple unwanted answers then it takes more time than to just filter after wanted responses instead
+# you could use mutate(response = na_if("Ctrl + 'B'", NA, response)) to remove the response that does not correspond to a likert response but if there are multiple unwanted answers then it takes more time than to just filter after wanted responses instead
+data_selfreport_cleaned2 <- data_selfreport_trials|>
+  mutate(response = ifelse(response == "Ctrl + 'B'", NA_integer_, response),
+       response = as.numeric(response))
 
 ```
 
@@ -734,19 +737,29 @@ Using only participants with complete data, calculate the mean and SD of all par
 
 ```{r}
 
-data_selfreport_tidy <- data_selfreport_cleaned |>
-  group_by(unique_id)|>
-  summarise( 
-    mean_score = mean(response, na.rm = TRUE),
-    item_count = sum(!is.na(c("like", "positive", "prefer"))),
-    complete_data = ifelse(item_count == 3, TRUE, FALSE)
-  )
+data_selfreport_tidy<- data_selfreport_cleaned %>% 
+  summarise(mean= mean(response, na.rm = TRUE),
+            sd = sd(response, na.rm = TRUE),
+            min= min(response, na.rm = TRUE),
+            max= max(response, na.rm = TRUE)) #by using filter(!is.na(response)) you can clearly see how many rows are not included -> more transparent regarding just to how many people the mean is in regards to
 
-data_selfreport_tidy_final <- data_selfreport_tidy|>
-  filter(complete_data = TRUE) 
+# data_selfreport_tidy <- data_selfreport_cleaned |>
+#   group_by(unique_id)|>
+#   summarise( mean_score = mean(response, na.rm = TRUE),
+#              item_count = sum(!is.na(c("like", "positive", "prefer"))),
+#              complete_data = ifelse(item_count == 3, TRUE, FALSE))
 
-mean(data_selfreport_tidy_final$mean_score, na.rm= TRUE)
-sd(data_selfreport_tidy_final$mean_score, na.rm = TRUE)
+data_selfreport_scored <- data_selfreport_cleaned %>% 
+  group_by(unique_id) %>% 
+  summarize(mean_self_report= mean(response),
+            n_self_report_items = n()) %>% 
+  mutate(self_report_complete = n_self_report_items ==3)
+
+# data_selfreport_tidy_final <- data_selfreport_tidy|>
+#   filter(complete_data = TRUE) 
+# 
+# mean(data_selfreport_tidy_final$mean_score, na.rm= TRUE)
+# sd(data_selfreport_tidy_final$mean_score, na.rm = TRUE)
 
 ```
 

@@ -88,6 +88,14 @@ Useful arguments:
 
 ```
 
+## fast key funktions 
+```{r}
+# command shift c -> put lines in #
+# option - ->    <- 
+# option and select lines with mouse makes you able to write in multiple lines 
+```
+
+
 ## dir.create
 
 ```{r}
@@ -112,9 +120,9 @@ Useful arguments:
 
 ```{r}
 
-# %>% uses output of a line as the input of the next line
+# %>% uses output of a line as the input of the next line, will run slower than |>
 
-# |>
+# |> might break tho by not letting the code run 
 
 ```
 
@@ -201,7 +209,8 @@ slice(mtcars, 2:n()) # this should have 31 rows
 
 ```{r}
 
-# dplyr::count() # gives you the ammount of each response
+# dplyr::count() # gives you the amount of each response, good to check all response types
+# count is group_by and summarise in one
 
 ```
 
@@ -328,6 +337,15 @@ Other packages you may need for wrangling which aren't covered here:
 
 - library(forcats). Everything to do with factors and factor levels. Useful for plotting and establishing reference levels for statistical tests.
 - library(stringr). Everything to do with strings, searching for strings, modifying strings, parsing them, etc.
+
+```{r}
+#filter(str_detect(trial_id, "2_")) will show you the rows with a trial_id containing 2_
+#can also be used with mutate 
+
+#str_detect using regex for more complex stuff, ask chatgpt
+```
+
+
 - library(lubridate). Everything to do with dates, parsing dates, converting date formats, etc. 
 
 # Session info
